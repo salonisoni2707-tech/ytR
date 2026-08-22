@@ -10,7 +10,8 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const products = [
   {
@@ -52,9 +53,68 @@ const categories = [
   "CUSTOM",
 ];
 
+type CartItem = {
+  name: string;
+  price: number;
+  visual: string;
+  quantity: number;
+};
+
 export default function Home() {
   const [menu, setMenu] = useState(false);
   const [cart, setCart] = useState(0);
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem("ytr-cart");
+
+    if (savedCart) {
+      try {
+        const items: CartItem[] = JSON.parse(savedCart);
+
+        setCart(
+          items.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+          )
+        );
+      } catch {
+        localStorage.removeItem("ytr-cart");
+      }
+    }
+  }, []);
+
+  const addToCart = (product: (typeof products)[number]) => {
+    const existing: CartItem[] = JSON.parse(
+      localStorage.getItem("ytr-cart") || "[]"
+    );
+
+    const found = existing.find(
+      (item) => item.name === product.name
+    );
+
+    if (found) {
+      found.quantity += 1;
+    } else {
+      existing.push({
+        name: product.name,
+        price: Number(product.price.replace("₹", "")),
+        visual: product.visual,
+        quantity: 1,
+      });
+    }
+
+    localStorage.setItem(
+      "ytr-cart",
+      JSON.stringify(existing)
+    );
+
+    setCart(
+      existing.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      )
+    );
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#070707] text-[#f2f0ea] selection:bg-lime-300 selection:text-black">
@@ -66,12 +126,22 @@ export default function Home() {
       <div className="border-b border-white/10 bg-[#0c0c0c] py-2">
         <motion.div
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "linear",
+          }}
           className="flex w-max gap-10 whitespace-nowrap text-[9px] font-black tracking-[0.28em] text-white/50"
         >
-          <span>YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦</span>
-          <span>YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦</span>
-          <span>YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦</span>
+          <span>
+            YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦
+          </span>
+          <span>
+            YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦
+          </span>
+          <span>
+            YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦
+          </span>
         </motion.div>
       </div>
 
@@ -104,18 +174,31 @@ export default function Home() {
             <a className="text-lime-300" href="#">
               INDEX
             </a>
-            <a className="text-white/50 transition hover:text-white" href="#shop">
+
+            <a
+              className="text-white/50 transition hover:text-white"
+              href="#shop"
+            >
               SHOP
             </a>
-            <a className="text-white/50 transition hover:text-white" href="#categories">
+
+            <a
+              className="text-white/50 transition hover:text-white"
+              href="#categories"
+            >
               OBJECTS
             </a>
-            <a className="text-white/50 transition hover:text-white" href="#story">
+
+            <a
+              className="text-white/50 transition hover:text-white"
+              href="#story"
+            >
               WORLD
             </a>
           </div>
 
           <div className="flex items-center gap-1">
+
             <button className="rounded-full p-2.5 text-white/60 hover:bg-white/5 hover:text-white">
               <Search size={18} />
             </button>
@@ -124,7 +207,11 @@ export default function Home() {
               <Heart size={18} />
             </button>
 
-            <button className="relative rounded-full border border-white/10 bg-white/[0.04] p-2.5">
+            {/* CART */}
+            <Link
+              href="/cart"
+              className="relative rounded-full border border-white/10 bg-white/[0.04] p-2.5"
+            >
               <ShoppingBag size={18} />
 
               {cart > 0 && (
@@ -132,7 +219,8 @@ export default function Home() {
                   {cart}
                 </span>
               )}
-            </button>
+            </Link>
+
           </div>
         </div>
 
@@ -152,11 +240,13 @@ export default function Home() {
       <section className="relative mx-auto max-w-7xl px-5 pb-24 pt-16 lg:px-8 lg:pt-24">
 
         <div className="absolute right-[-10%] top-[5%] h-[500px] w-[500px] rounded-full bg-violet-700/10 blur-[140px]" />
+
         <div className="absolute left-[-15%] top-[35%] h-[350px] w-[350px] rounded-full bg-lime-300/[0.04] blur-[120px]" />
 
         <div className="relative grid items-center gap-16 lg:grid-cols-[1.1fr_.9fr]">
 
           <div>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -166,7 +256,6 @@ export default function Home() {
               YOUR SPACE / YOUR RULES
             </motion.div>
 
-            {/* HERO HEADING — MOTION */}
             <motion.h1
               initial="hidden"
               animate="show"
@@ -222,7 +311,6 @@ export default function Home() {
               that refuse to look like everyone else&apos;s.
             </motion.p>
 
-            {/* CTA — MOTION */}
             <motion.a
               href="#shop"
               initial={{ opacity: 0, y: 10 }}
@@ -233,11 +321,13 @@ export default function Home() {
               className="group mt-8 inline-flex items-center gap-4 border border-white/20 bg-white px-7 py-4 text-[10px] font-black tracking-[0.15em] text-black transition hover:bg-lime-300"
             >
               ENTER THE ROOM
+
               <ArrowUpRight
                 size={15}
                 className="transition group-hover:rotate-45"
               />
             </motion.a>
+
           </div>
 
           {/* HERO OBJECT */}
@@ -260,7 +350,6 @@ export default function Home() {
               YTR / 001
             </div>
 
-            {/* HERO FLOATING OBJECT — MOTION */}
             <motion.div
               animate={{
                 y: [0, -20, 0],
@@ -281,7 +370,6 @@ export default function Home() {
               🏎️
             </motion.div>
 
-            {/* FLOATING STICKER — MOTION */}
             <motion.div
               animate={{
                 rotate: [0, 8, -8, 0],
@@ -305,6 +393,7 @@ export default function Home() {
               <div className="text-[9px] font-black tracking-[0.2em] text-white/30">
                 OBJECT / 01
               </div>
+
               <div className="mt-1 text-xl font-black">
                 MAKE YOUR WALL LOUD.
               </div>
@@ -313,7 +402,9 @@ export default function Home() {
             <div className="absolute bottom-[8%] right-[8%] flex h-14 w-14 items-center justify-center rounded-full border border-white/20 text-white/40">
               <ArrowUpRight size={18} />
             </div>
+
           </motion.div>
+
         </div>
       </section>
 
@@ -329,9 +420,17 @@ export default function Home() {
               key={num}
               className="border-b border-white/10 p-7 md:border-b-0 md:border-r md:last:border-r-0 lg:p-10"
             >
-              <div className="text-[9px] font-black text-lime-300">{num}</div>
-              <div className="mt-7 text-lg font-black">{title}</div>
-              <div className="mt-2 text-xs text-white/35">{desc}</div>
+              <div className="text-[9px] font-black text-lime-300">
+                {num}
+              </div>
+
+              <div className="mt-7 text-lg font-black">
+                {title}
+              </div>
+
+              <div className="mt-2 text-xs text-white/35">
+                {desc}
+              </div>
             </div>
           ))}
         </div>
@@ -344,6 +443,7 @@ export default function Home() {
       >
         <div className="mb-10 flex items-end justify-between">
           <div>
+
             <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-lime-300">
               <Sparkles size={12} />
               THE OBJECT LIBRARY
@@ -352,8 +452,11 @@ export default function Home() {
             <h2 className="mt-3 text-4xl font-black uppercase tracking-[-0.05em] sm:text-6xl">
               FIND YOUR
               <br />
-              <span className="text-white/20">OBSESSION.</span>
+              <span className="text-white/20">
+                OBSESSION.
+              </span>
             </h2>
+
           </div>
         </div>
 
@@ -375,14 +478,122 @@ export default function Home() {
       </section>
 
       {/* PRODUCTS */}
-            {/* ROOM INSPO — MOVING GALLERY */}
+      <section
+        id="shop"
+        className="mx-auto max-w-7xl px-5 pb-24 lg:px-8"
+      >
+
+        <div className="mb-12 flex items-end justify-between border-b border-white/10 pb-5">
+
+          <div>
+            <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
+              001 — CURRENT DROP
+            </p>
+
+            <h2 className="mt-2 text-4xl font-black uppercase tracking-[-0.05em]">
+              GOOD STUFF.
+            </h2>
+          </div>
+
+          <div className="hidden text-[9px] font-black tracking-widest text-white/30 sm:block">
+            SCROLL TO EXPLORE ↓
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+
+          {products.map((product, index) => (
+            <motion.article
+              key={product.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.08 }}
+              whileHover={{
+                y: -12,
+                rotate: index % 2 === 0 ? -1 : 1,
+                transition: {
+                  duration: 0.25,
+                },
+              }}
+              className="group"
+            >
+
+              <div
+                className={`relative aspect-[4/5] overflow-hidden border border-white/10 bg-gradient-to-br ${product.bg}`}
+              >
+
+                <div className="absolute left-3 top-3 z-10 text-[8px] font-black tracking-[0.2em] text-white/30">
+                  YTR / 0{index + 1}
+                </div>
+
+                <button className="absolute right-3 top-3 z-10 rounded-full border border-white/10 bg-black/30 p-2 opacity-0 backdrop-blur transition group-hover:opacity-100">
+                  <Heart size={13} />
+                </button>
+
+                <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:30px_30px]" />
+
+                <motion.div
+                  whileHover={{
+                    scale: 1.2,
+                    rotate: index % 2 === 0 ? 5 : -5,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 12,
+                  }}
+                  className="absolute inset-0 flex items-center justify-center text-[90px]"
+                >
+                  {product.visual}
+                </motion.div>
+
+                {/* REAL ADD TO BAG */}
+                <button
+                  onClick={() => addToCart(product)}
+                  className="absolute bottom-3 left-3 right-3 translate-y-3 bg-white py-3 text-[9px] font-black text-black opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-lime-300"
+                >
+                  + ADD TO BAG
+                </button>
+
+              </div>
+
+              <div className="border-b border-white/10 py-4">
+
+                <div className="text-[8px] font-black tracking-[0.2em] text-white/30">
+                  {product.category}
+                </div>
+
+                <div className="mt-1 flex items-start justify-between gap-2">
+
+                  <h3 className="text-sm font-black">
+                    {product.name}
+                  </h3>
+
+                  <span className="whitespace-nowrap text-xs font-bold text-lime-300">
+                    {product.price}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </motion.article>
+          ))}
+
+        </div>
+      </section>
+
+      {/* ROOM INSPO — MOVING GALLERY */}
       <section className="overflow-hidden border-y border-white/10 bg-[#050505] py-24">
 
-        {/* HEADER */}
         <div className="mx-auto max-w-7xl px-5 pb-12 lg:px-8">
+
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
 
             <div>
+
               <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-lime-300">
                 <Sparkles size={12} />
                 YTR / ROOM INSPO
@@ -391,10 +602,15 @@ export default function Home() {
               <h2 className="mt-4 text-5xl font-black uppercase leading-[0.8] tracking-[-0.06em] sm:text-7xl lg:text-8xl">
                 ROOMS
                 <br />
-                <span className="text-white/15">THAT GO</span>
+                <span className="text-white/15">
+                  THAT GO
+                </span>
                 <br />
-                <span className="text-lime-300">HARD.</span>
+                <span className="text-lime-300">
+                  HARD.
+                </span>
               </h2>
+
             </div>
 
             <p className="max-w-sm text-xs leading-6 text-white/35">
@@ -416,7 +632,6 @@ export default function Home() {
               repeat: Infinity,
               ease: "linear",
             }}
-            whileHover={{ animationPlayState: "paused" }}
             className="flex w-max gap-5"
           >
 
@@ -445,8 +660,6 @@ export default function Home() {
                 label: "STREET / 004",
                 title: "YOUR SPACE",
               },
-
-              /* DUPLICATES FOR INFINITE LOOP */
               {
                 image:
                   "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85",
@@ -481,16 +694,14 @@ export default function Home() {
                   className="h-full w-full object-cover grayscale-[15%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
                 />
 
-                {/* DARK GRADIENT */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10" />
 
-                {/* LABEL */}
                 <div className="absolute left-5 top-5 text-[8px] font-black tracking-[0.25em] text-white/50">
                   {room.label}
                 </div>
 
-                {/* TITLE */}
                 <div className="absolute bottom-5 left-5">
+
                   <div className="text-lg font-black uppercase tracking-tight">
                     {room.title}
                   </div>
@@ -498,9 +709,9 @@ export default function Home() {
                   <div className="mt-1 text-[8px] font-black tracking-[0.2em] text-lime-300">
                     INSPO →
                   </div>
+
                 </div>
 
-                {/* NUMBER */}
                 <div className="absolute bottom-5 right-5 text-[9px] font-black text-white/30">
                   0{index + 1}
                 </div>
@@ -510,9 +721,10 @@ export default function Home() {
             ))}
 
           </motion.div>
+
         </div>
 
-        {/* ROW 2 — OPPOSITE DIRECTION */}
+        {/* ROW 2 */}
         <div className="relative overflow-hidden">
 
           <motion.div
@@ -550,8 +762,6 @@ export default function Home() {
                 label: "NIGHT / 010",
                 title: "AFTER DARK",
               },
-
-              /* DUPLICATES */
               {
                 image:
                   "https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=85",
@@ -588,6 +798,7 @@ export default function Home() {
                 </div>
 
                 <div className="absolute bottom-5 left-5">
+
                   <div className="text-base font-black uppercase">
                     {room.title}
                   </div>
@@ -595,6 +806,7 @@ export default function Home() {
                   <div className="mt-1 text-[8px] font-black tracking-[0.2em] text-lime-300">
                     GET INSPIRED →
                   </div>
+
                 </div>
 
               </motion.div>
@@ -602,9 +814,9 @@ export default function Home() {
             ))}
 
           </motion.div>
+
         </div>
 
-        {/* BOTTOM LINE */}
         <div className="mx-auto mt-12 flex max-w-7xl items-center justify-between border-t border-white/10 px-5 pt-5 lg:px-8">
 
           <span className="text-[8px] font-black tracking-[0.25em] text-white/25">
@@ -631,9 +843,11 @@ export default function Home() {
         id="story"
         className="relative overflow-hidden border-y border-white/10 bg-[#0b0b0b] px-5 py-28 lg:px-8"
       >
+
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-700/10 blur-[130px]" />
 
         <div className="relative mx-auto max-w-6xl">
+
           <p className="text-[9px] font-black tracking-[0.3em] text-lime-300">
             YTR / PHILOSOPHY
           </p>
@@ -643,9 +857,13 @@ export default function Home() {
             <br />
             ROOMS
             <br />
-            <span className="text-white/15">ARE A</span>
+            <span className="text-white/15">
+              ARE A
+            </span>
             <br />
-            <span className="text-lime-300">CHOICE.</span>
+            <span className="text-lime-300">
+              CHOICE.
+            </span>
           </h2>
 
           <p className="mt-10 max-w-md text-sm leading-7 text-white/35">
@@ -653,14 +871,19 @@ export default function Home() {
             pieces. Handmade pieces. Pieces you actually want people to ask
             about.
           </p>
+
         </div>
       </section>
 
       {/* FINAL CTA */}
       <section className="px-5 py-20 lg:px-8">
+
         <div className="mx-auto max-w-7xl border border-white/10 bg-[#101010] p-8 sm:p-14 lg:p-20">
+
           <div className="grid items-end gap-10 md:grid-cols-2">
+
             <div>
+
               <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
                 THIS IS YOUR SIGN
               </p>
@@ -670,11 +893,15 @@ export default function Home() {
                 <br />
                 YOUR ROOM
                 <br />
-                <span className="text-lime-300">UNFORGETTABLE.</span>
+                <span className="text-lime-300">
+                  UNFORGETTABLE.
+                </span>
               </h2>
+
             </div>
 
             <div className="md:text-right">
+
               <p className="mx-auto max-w-sm text-sm leading-6 text-white/35 md:ml-auto">
                 Follow the weird. Pick what feels like you. Build a space
                 nobody else could have made.
@@ -682,22 +909,33 @@ export default function Home() {
 
               <motion.a
                 href="#shop"
-                whileHover={{ scale: 1.05, x: 4 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{
+                  scale: 1.05,
+                  x: 4,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                }}
                 className="mt-7 inline-flex items-center gap-3 bg-lime-300 px-7 py-4 text-[9px] font-black tracking-[0.15em] text-black transition hover:bg-white"
               >
                 EXPLORE YTR
                 <ArrowUpRight size={15} />
               </motion.a>
+
             </div>
+
           </div>
+
         </div>
       </section>
 
       {/* FOOTER */}
       <footer className="border-t border-white/10 px-5 py-10 lg:px-8">
+
         <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+
           <div>
+
             <div className="text-4xl font-black tracking-[-0.12em]">
               yt<span className="text-lime-300">R</span>
             </div>
@@ -705,13 +943,17 @@ export default function Home() {
             <div className="mt-2 text-[8px] font-bold tracking-[0.25em] text-white/25">
               YOUR TRENDY ROOM
             </div>
+
           </div>
 
           <div className="text-[9px] font-bold tracking-wider text-white/25">
             © 2026 YTR — NO BORING ROOMS.
           </div>
+
         </div>
+
       </footer>
+
     </main>
   );
 }
