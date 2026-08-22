@@ -375,93 +375,255 @@ export default function Home() {
       </section>
 
       {/* PRODUCTS */}
-      <section id="shop" className="mx-auto max-w-7xl px-5 pb-24 lg:px-8">
+            {/* ROOM INSPO — MOVING GALLERY */}
+      <section className="overflow-hidden border-y border-white/10 bg-[#050505] py-24">
 
-        <div className="mb-12 flex items-end justify-between border-b border-white/10 pb-5">
-          <div>
-            <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
-              001 — CURRENT DROP
+        {/* HEADER */}
+        <div className="mx-auto max-w-7xl px-5 pb-12 lg:px-8">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+
+            <div>
+              <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-lime-300">
+                <Sparkles size={12} />
+                YTR / ROOM INSPO
+              </div>
+
+              <h2 className="mt-4 text-5xl font-black uppercase leading-[0.8] tracking-[-0.06em] sm:text-7xl lg:text-8xl">
+                ROOMS
+                <br />
+                <span className="text-white/15">THAT GO</span>
+                <br />
+                <span className="text-lime-300">HARD.</span>
+              </h2>
+            </div>
+
+            <p className="max-w-sm text-xs leading-6 text-white/35">
+              Steal the vibe. Not the personality.
+              <br />
+              A little inspiration for your next room obsession.
             </p>
-            <h2 className="mt-2 text-4xl font-black uppercase tracking-[-0.05em]">
-              GOOD STUFF.
-            </h2>
-          </div>
 
-          <div className="hidden text-[9px] font-black tracking-widest text-white/30 sm:block">
-            SCROLL TO EXPLORE ↓
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
-          {products.map((product, index) => (
-            <motion.article
-              key={product.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08 }}
-              whileHover={{
-                y: -12,
-                rotate: index % 2 === 0 ? -1 : 1,
-                transition: {
-                  duration: 0.25,
-                },
-              }}
-              className="group"
-            >
-              <div
-                className={`relative aspect-[4/5] overflow-hidden border border-white/10 bg-gradient-to-br ${product.bg}`}
+        {/* ROW 1 */}
+        <div className="relative mb-5 overflow-hidden">
+
+          <motion.div
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{
+              duration: 35,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            whileHover={{ animationPlayState: "paused" }}
+            className="flex w-max gap-5"
+          >
+
+            {[
+              {
+                image:
+                  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85",
+                label: "DARK / 001",
+                title: "MIDNIGHT ROOM",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85",
+                label: "CREATIVE / 002",
+                title: "OBJECT HEAVEN",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=85",
+                label: "MINIMAL / 003",
+                title: "LESS BASIC",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85",
+                label: "STREET / 004",
+                title: "YOUR SPACE",
+              },
+
+              /* DUPLICATES FOR INFINITE LOOP */
+              {
+                image:
+                  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85",
+                label: "OBJECT / 005",
+                title: "NO BORING WALLS",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=85",
+                label: "VIBE / 006",
+                title: "MAKE IT YOURS",
+              },
+            ].map((room, index) => (
+
+              <motion.div
+                key={`${room.title}-${index}`}
+                whileHover={{
+                  scale: 1.04,
+                  rotate: index % 2 === 0 ? -1 : 1,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 18,
+                }}
+                className="group relative h-[280px] w-[390px] shrink-0 overflow-hidden border border-white/10 bg-zinc-900 sm:h-[350px] sm:w-[500px]"
               >
 
-                <div className="absolute left-3 top-3 z-10 text-[8px] font-black tracking-[0.2em] text-white/30">
-                  YTR / 0{index + 1}
+                <img
+                  src={room.image}
+                  alt={room.title}
+                  className="h-full w-full object-cover grayscale-[15%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                />
+
+                {/* DARK GRADIENT */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10" />
+
+                {/* LABEL */}
+                <div className="absolute left-5 top-5 text-[8px] font-black tracking-[0.25em] text-white/50">
+                  {room.label}
                 </div>
 
-                <button className="absolute right-3 top-3 z-10 rounded-full border border-white/10 bg-black/30 p-2 opacity-0 backdrop-blur transition group-hover:opacity-100">
-                  <Heart size={13} />
-                </button>
+                {/* TITLE */}
+                <div className="absolute bottom-5 left-5">
+                  <div className="text-lg font-black uppercase tracking-tight">
+                    {room.title}
+                  </div>
 
-                <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:30px_30px]" />
-
-                {/* PRODUCT IMAGE — MOTION */}
-                <motion.div
-                  whileHover={{
-                    scale: 1.2,
-                    rotate: index % 2 === 0 ? 5 : -5,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 200,
-                    damping: 12,
-                  }}
-                  className="absolute inset-0 flex items-center justify-center text-[90px]"
-                >
-                  {product.visual}
-                </motion.div>
-
-                <button
-                  onClick={() => setCart((value) => value + 1)}
-                  className="absolute bottom-3 left-3 right-3 translate-y-3 bg-white py-3 text-[9px] font-black text-black opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-lime-300"
-                >
-                  + ADD TO BAG
-                </button>
-              </div>
-
-              <div className="border-b border-white/10 py-4">
-                <div className="text-[8px] font-black tracking-[0.2em] text-white/30">
-                  {product.category}
+                  <div className="mt-1 text-[8px] font-black tracking-[0.2em] text-lime-300">
+                    INSPO →
+                  </div>
                 </div>
 
-                <div className="mt-1 flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-black">{product.name}</h3>
-                  <span className="whitespace-nowrap text-xs font-bold text-lime-300">
-                    {product.price}
-                  </span>
+                {/* NUMBER */}
+                <div className="absolute bottom-5 right-5 text-[9px] font-black text-white/30">
+                  0{index + 1}
                 </div>
-              </div>
-            </motion.article>
-          ))}
+
+              </motion.div>
+
+            ))}
+
+          </motion.div>
         </div>
+
+        {/* ROW 2 — OPPOSITE DIRECTION */}
+        <div className="relative overflow-hidden">
+
+          <motion.div
+            animate={{ x: ["-50%", "0%"] }}
+            transition={{
+              duration: 42,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="flex w-max gap-5"
+          >
+
+            {[
+              {
+                image:
+                  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+                label: "RAW / 007",
+                title: "BUILT DIFFERENT",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=85",
+                label: "RETRO / 008",
+                title: "OLD SCHOOL",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85",
+                label: "ART / 009",
+                title: "WALL ENERGY",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=900&q=85",
+                label: "NIGHT / 010",
+                title: "AFTER DARK",
+              },
+
+              /* DUPLICATES */
+              {
+                image:
+                  "https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=85",
+                label: "RETRO / 011",
+                title: "COLLECT YOUR VIBE",
+              },
+              {
+                image:
+                  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85",
+                label: "ART / 012",
+                title: "MAKE IT LOUD",
+              },
+            ].map((room, index) => (
+
+              <motion.div
+                key={`${room.title}-${index}`}
+                whileHover={{
+                  scale: 1.04,
+                  rotate: index % 2 === 0 ? 1 : -1,
+                }}
+                className="group relative h-[220px] w-[310px] shrink-0 overflow-hidden border border-white/10 bg-zinc-900 sm:h-[290px] sm:w-[430px]"
+              >
+
+                <img
+                  src={room.image}
+                  alt={room.title}
+                  className="h-full w-full object-cover grayscale-[20%] transition duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10" />
+
+                <div className="absolute left-5 top-5 text-[8px] font-black tracking-[0.25em] text-white/50">
+                  {room.label}
+                </div>
+
+                <div className="absolute bottom-5 left-5">
+                  <div className="text-base font-black uppercase">
+                    {room.title}
+                  </div>
+
+                  <div className="mt-1 text-[8px] font-black tracking-[0.2em] text-lime-300">
+                    GET INSPIRED →
+                  </div>
+                </div>
+
+              </motion.div>
+
+            ))}
+
+          </motion.div>
+        </div>
+
+        {/* BOTTOM LINE */}
+        <div className="mx-auto mt-12 flex max-w-7xl items-center justify-between border-t border-white/10 px-5 pt-5 lg:px-8">
+
+          <span className="text-[8px] font-black tracking-[0.25em] text-white/25">
+            MORE ROOMS / MORE PERSONALITY
+          </span>
+
+          <motion.span
+            animate={{ x: [0, 5, 0] }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+            }}
+            className="text-[9px] font-black text-lime-300"
+          >
+            KEEP SCROLLING →
+          </motion.span>
+
+        </div>
+
       </section>
 
       {/* HUGE STATEMENT */}
