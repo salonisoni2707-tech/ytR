@@ -166,17 +166,50 @@ export default function Home() {
               YOUR SPACE / YOUR RULES
             </motion.div>
 
+            {/* HERO HEADING — MOTION */}
             <motion.h1
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: {
+                  transition: {
+                    staggerChildren: 0.08,
+                  },
+                },
+              }}
               className="text-[62px] font-black uppercase leading-[0.78] tracking-[-0.075em] sm:text-8xl lg:text-[118px]"
             >
-              DON'T
-              <br />
-              <span className="text-white/20">DECORATE.</span>
-              <br />
-              <span className="text-lime-300">CREATE.</span>
+              {["DON'T", "DECORATE.", "CREATE."].map((word, i) => (
+                <motion.span
+                  key={word}
+                  variants={{
+                    hidden: {
+                      opacity: 0,
+                      y: 80,
+                      rotate: i === 1 ? -3 : 0,
+                    },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      rotate: 0,
+                      transition: {
+                        duration: 0.7,
+                        ease: [0.22, 1, 0.36, 1],
+                      },
+                    },
+                  }}
+                  className={`block ${
+                    i === 1
+                      ? "text-white/20"
+                      : i === 2
+                        ? "text-lime-300"
+                        : ""
+                  }`}
+                >
+                  {word}
+                </motion.span>
+              ))}
             </motion.h1>
 
             <motion.p
@@ -189,11 +222,14 @@ export default function Home() {
               that refuse to look like everyone else&apos;s.
             </motion.p>
 
+            {/* CTA — MOTION */}
             <motion.a
               href="#shop"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05, x: 4 }}
+              whileTap={{ scale: 0.95 }}
               className="group mt-8 inline-flex items-center gap-4 border border-white/20 bg-white px-7 py-4 text-[10px] font-black tracking-[0.15em] text-black transition hover:bg-lime-300"
             >
               ENTER THE ROOM
@@ -224,18 +260,45 @@ export default function Home() {
               YTR / 001
             </div>
 
+            {/* HERO FLOATING OBJECT — MOTION */}
             <motion.div
               animate={{
-                y: [0, -18, 0],
-                rotate: [-3, 3, -3],
+                y: [0, -20, 0],
+                rotate: [-3, 2, -3],
+                scale: [1, 1.03, 1],
               }}
               transition={{
                 duration: 5,
                 repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              whileHover={{
+                scale: 1.12,
+                rotate: 8,
               }}
               className="absolute inset-0 flex items-center justify-center text-[155px] drop-shadow-[0_0_70px_rgba(139,92,246,.3)] sm:text-[190px]"
             >
               🏎️
+            </motion.div>
+
+            {/* FLOATING STICKER — MOTION */}
+            <motion.div
+              animate={{
+                rotate: [0, 8, -8, 0],
+                y: [0, -8, 0],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute bottom-[25%] left-[-2%] z-30 hidden border border-white/20 bg-[#111] px-4 py-3 text-[8px] font-black tracking-[0.2em] text-lime-300 shadow-2xl sm:block"
+            >
+              NO
+              <br />
+              BORING
+              <br />
+              ROOMS.
             </motion.div>
 
             <div className="absolute bottom-[13%] left-[12%] max-w-[180px]">
@@ -337,7 +400,13 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.08 }}
-              whileHover={{ y: -8 }}
+              whileHover={{
+                y: -12,
+                rotate: index % 2 === 0 ? -1 : 1,
+                transition: {
+                  duration: 0.25,
+                },
+              }}
               className="group"
             >
               <div
@@ -354,9 +423,18 @@ export default function Home() {
 
                 <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:30px_30px]" />
 
+                {/* PRODUCT IMAGE — MOTION */}
                 <motion.div
-                  whileHover={{ scale: 1.18, rotate: 6 }}
-                  className="absolute inset-0 flex items-center justify-center text-[90px] drop-shadow-[0_0_50px_rgba(255,255,255,.12)]"
+                  whileHover={{
+                    scale: 1.2,
+                    rotate: index % 2 === 0 ? 5 : -5,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 12,
+                  }}
+                  className="absolute inset-0 flex items-center justify-center text-[90px]"
                 >
                   {product.visual}
                 </motion.div>
@@ -440,13 +518,15 @@ export default function Home() {
                 nobody else could have made.
               </p>
 
-              <a
+              <motion.a
                 href="#shop"
+                whileHover={{ scale: 1.05, x: 4 }}
+                whileTap={{ scale: 0.95 }}
                 className="mt-7 inline-flex items-center gap-3 bg-lime-300 px-7 py-4 text-[9px] font-black tracking-[0.15em] text-black transition hover:bg-white"
               >
                 EXPLORE YTR
                 <ArrowUpRight size={15} />
-              </a>
+              </motion.a>
             </div>
           </div>
         </div>
