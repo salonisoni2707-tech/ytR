@@ -14,101 +14,121 @@ import { useState } from "react";
 
 const products = [
   {
-    name: "Mini Racer Wall Art",
-    category: "WALL DECOR",
+    name: "Racer Wall Piece",
+    category: "WALL / 01",
     price: "₹899",
-    image: "🚗",
-    size: "tall",
+    visual: "🏎️",
+    bg: "from-zinc-900 to-violet-950",
   },
   {
-    name: "Handmade Cloud Piece",
-    category: "HANDMADE",
+    name: "Cloud Nine",
+    category: "HANDMADE / 02",
     price: "₹699",
-    image: "☁️",
-    size: "normal",
+    visual: "☁️",
+    bg: "from-neutral-900 to-slate-800",
   },
   {
-    name: "Retro Cotton Frame",
-    category: "TEXTILE ART",
+    name: "Retro Frame",
+    category: "WALL / 03",
     price: "₹799",
-    image: "🖼️",
-    size: "normal",
+    visual: "🖼️",
+    bg: "from-zinc-900 to-emerald-950",
   },
   {
-    name: "Cherry Room Charm",
-    category: "DECOR",
+    name: "Cherry Bomb",
+    category: "DECOR / 04",
     price: "₹499",
-    image: "🍒",
-    size: "tall",
+    visual: "🍒",
+    bg: "from-neutral-900 to-red-950",
   },
 ];
 
 const categories = [
-  "Wall Decor",
-  "Handmade",
-  "Car Culture",
-  "Textile Art",
-  "Personalized",
+  "ALL",
+  "WALL DECOR",
+  "HANDMADE",
+  "CAR CULTURE",
+  "TEXTILE",
+  "CUSTOM",
 ];
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menu, setMenu] = useState(false);
   const [cart, setCart] = useState(0);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f5f2ec] text-[#111]">
-      {/* TOP BAR */}
-      <div className="bg-[#111] px-4 py-2 text-center text-[10px] font-bold tracking-[0.25em] text-white">
-        FREE SHIPPING ON ORDERS ABOVE ₹999 ✦ MADE WITH LOVE
+    <main className="min-h-screen overflow-hidden bg-[#070707] text-[#f2f0ea] selection:bg-lime-300 selection:text-black">
+
+      {/* GRAIN */}
+      <div className="pointer-events-none fixed inset-0 z-[60] opacity-[0.035] [background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 180 180%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%221%22/%3E%3C/svg%3E')]" />
+
+      {/* TOP TICKER */}
+      <div className="border-b border-white/10 bg-[#0c0c0c] py-2">
+        <motion.div
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          className="flex w-max gap-10 whitespace-nowrap text-[9px] font-black tracking-[0.28em] text-white/50"
+        >
+          <span>YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦</span>
+          <span>YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦</span>
+          <span>YOUR TRENDY ROOM ✦ NO BASIC ROOMS ✦ MADE TO STAND OUT ✦</span>
+        </motion.div>
       </div>
 
-      {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b border-black/10 bg-[#f5f2ec]/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+      {/* NAV */}
+      <nav className="relative z-50 border-b border-white/10 bg-[#070707]/85 backdrop-blur-xl">
+        <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 lg:px-8">
+
           <button
-            className="rounded-full border border-black/10 p-2 lg:hidden"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => setMenu(!menu)}
+            className="rounded-full border border-white/10 p-2 lg:hidden"
           >
-            {menuOpen ? <X size={19} /> : <Menu size={19} />}
+            {menu ? <X size={18} /> : <Menu size={18} />}
           </button>
 
-          <div className="absolute left-1/2 -translate-x-1/2 text-center lg:static lg:translate-x-0">
-            <div className="text-3xl font-black tracking-[-0.09em]">
-              yt<span className="text-[#ff4f91]">R</span>
+          <div className="flex items-center gap-4">
+            <div className="text-[38px] font-black leading-none tracking-[-0.12em]">
+              yt<span className="text-lime-300">R</span>
             </div>
-            <div className="hidden text-[7px] font-bold tracking-[0.28em] text-black/40 sm:block">
-              YOUR TRENDY ROOM
+
+            <div className="hidden border-l border-white/10 pl-4 text-[8px] font-bold leading-3 tracking-[0.2em] text-white/30 sm:block">
+              YOUR
+              <br />
+              TRENDY
+              <br />
+              ROOM
             </div>
           </div>
 
-          <div className="hidden items-center gap-8 text-[11px] font-bold uppercase tracking-wider lg:flex">
-            <a href="#" className="hover:opacity-50">
-              Home
+          <div className="hidden items-center gap-8 text-[10px] font-black tracking-[0.16em] lg:flex">
+            <a className="text-lime-300" href="#">
+              INDEX
             </a>
-            <a href="#shop" className="hover:opacity-50">
-              Shop
+            <a className="text-white/50 transition hover:text-white" href="#shop">
+              SHOP
             </a>
-            <a href="#categories" className="hover:opacity-50">
-              Categories
+            <a className="text-white/50 transition hover:text-white" href="#categories">
+              OBJECTS
             </a>
-            <a href="#story" className="hover:opacity-50">
-              Our Story
+            <a className="text-white/50 transition hover:text-white" href="#story">
+              WORLD
             </a>
           </div>
 
           <div className="flex items-center gap-1">
-            <button className="rounded-full p-2.5 hover:bg-black/5">
-              <Search size={19} />
+            <button className="rounded-full p-2.5 text-white/60 hover:bg-white/5 hover:text-white">
+              <Search size={18} />
             </button>
 
-            <button className="hidden rounded-full p-2.5 hover:bg-black/5 sm:block">
-              <Heart size={19} />
+            <button className="hidden rounded-full p-2.5 text-white/60 hover:bg-white/5 hover:text-white sm:block">
+              <Heart size={18} />
             </button>
 
-            <button className="relative rounded-full bg-[#111] p-2.5 text-white">
+            <button className="relative rounded-full border border-white/10 bg-white/[0.04] p-2.5">
               <ShoppingBag size={18} />
+
               {cart > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#ff4f91] text-[9px] font-black">
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-lime-300 text-[9px] font-black text-black">
                   {cart}
                 </span>
               )}
@@ -116,134 +136,173 @@ export default function Home() {
           </div>
         </div>
 
-        {menuOpen && (
-          <div className="border-t border-black/10 px-5 py-6 lg:hidden">
-            <div className="flex flex-col gap-5 text-sm font-bold">
-              <a href="#">Home</a>
-              <a href="#shop">Shop</a>
-              <a href="#categories">Categories</a>
-              <a href="#story">Our Story</a>
+        {menu && (
+          <div className="border-t border-white/10 px-5 py-6 lg:hidden">
+            <div className="flex flex-col gap-5 text-xs font-black tracking-widest">
+              <a href="#">INDEX</a>
+              <a href="#shop">SHOP</a>
+              <a href="#categories">OBJECTS</a>
+              <a href="#story">WORLD</a>
             </div>
           </div>
         )}
       </nav>
 
       {/* HERO */}
-      <section className="mx-auto max-w-7xl px-5 pb-14 pt-12 lg:px-8 lg:pb-24 lg:pt-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
+      <section className="relative mx-auto max-w-7xl px-5 pb-24 pt-16 lg:px-8 lg:pt-24">
+
+        <div className="absolute right-[-10%] top-[5%] h-[500px] w-[500px] rounded-full bg-violet-700/10 blur-[140px]" />
+        <div className="absolute left-[-15%] top-[35%] h-[350px] w-[350px] rounded-full bg-lime-300/[0.04] blur-[120px]" />
+
+        <div className="relative grid items-center gap-16 lg:grid-cols-[1.1fr_.9fr]">
+
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 py-2 text-[9px] font-black tracking-[0.2em]"
+              className="mb-8 flex items-center gap-3 text-[9px] font-black tracking-[0.3em] text-lime-300"
             >
-              <Sparkles size={12} />
-              FOR ROOMS WITH PERSONALITY
+              <span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_15px_#bef264]" />
+              YOUR SPACE / YOUR RULES
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="max-w-3xl text-[58px] font-black leading-[0.87] tracking-[-0.065em] sm:text-7xl lg:text-[100px]"
+              className="text-[62px] font-black uppercase leading-[0.78] tracking-[-0.075em] sm:text-8xl lg:text-[118px]"
             >
-              YOUR ROOM.
+              DON'T
               <br />
-              <span className="text-[#ff4f91]">YOUR RULES.</span>
+              <span className="text-white/20">DECORATE.</span>
+              <br />
+              <span className="text-lime-300">CREATE.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.25 }}
-              className="mt-7 max-w-md text-sm leading-6 text-black/55 sm:text-base"
+              transition={{ delay: 0.3 }}
+              className="mt-9 max-w-md text-sm leading-7 text-white/40"
             >
-              Handmade pieces, weird little finds and statement decor for
-              people who refuse to have a boring room.
+              Handmade objects, wall pieces and weird little things for rooms
+              that refuse to look like everyone else&apos;s.
             </motion.p>
 
             <motion.a
               href="#shop"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#111] px-7 py-4 text-xs font-black text-white transition hover:scale-105"
+              transition={{ delay: 0.4 }}
+              className="group mt-8 inline-flex items-center gap-4 border border-white/20 bg-white px-7 py-4 text-[10px] font-black tracking-[0.15em] text-black transition hover:bg-lime-300"
             >
-              SHOP THE DROP
-              <ArrowUpRight size={15} />
+              ENTER THE ROOM
+              <ArrowUpRight
+                size={15}
+                className="transition group-hover:rotate-45"
+              />
             </motion.a>
           </div>
 
-          {/* HERO COLLAGE */}
+          {/* HERO OBJECT */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-            className="relative h-[450px]"
+            initial={{ opacity: 0, rotate: 5, scale: 0.9 }}
+            animate={{ opacity: 1, rotate: -3, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="relative mx-auto aspect-square w-full max-w-[520px]"
           >
-            <div className="absolute right-0 top-0 h-[330px] w-[75%] rotate-2 rounded-[2rem] bg-[#d9c9ff] p-5 shadow-xl">
-              <div className="flex h-full items-center justify-center rounded-[1.5rem] border border-black/10 bg-[#ede6ff]">
-                <span className="text-[130px]">🚗</span>
-              </div>
-            </div>
 
-            <div className="absolute bottom-0 left-0 z-10 h-[240px] w-[55%] -rotate-3 rounded-[2rem] bg-[#ffc8dd] p-5 shadow-xl">
-              <div className="flex h-full items-center justify-center rounded-[1.5rem] border border-black/10 bg-[#ffe5ef]">
-                <span className="text-[100px]">🌸</span>
-              </div>
-            </div>
+            <div className="absolute inset-[8%] rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#171717] via-[#0d0d0d] to-[#171126] shadow-2xl" />
 
-            <div className="absolute bottom-[8%] right-[5%] z-20 rounded-full bg-[#ffdf4d] px-5 py-4 text-center text-[9px] font-black uppercase tracking-wider shadow-lg">
-              make
+            <div className="absolute right-[7%] top-[8%] rotate-6 border border-lime-300/40 bg-lime-300 px-4 py-3 text-[8px] font-black text-black">
+              NEW
               <br />
-              it yours ✦
+              OBJECTS
             </div>
 
-            <div className="absolute left-[4%] top-[8%] z-20 rotate-[-8deg] rounded-full bg-[#111] px-5 py-3 text-[9px] font-black text-white shadow-lg">
-              NOT BASIC.
+            <div className="absolute left-[10%] top-[15%] text-[8px] font-black tracking-[0.3em] text-white/30">
+              YTR / 001
+            </div>
+
+            <motion.div
+              animate={{
+                y: [0, -18, 0],
+                rotate: [-3, 3, -3],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+              }}
+              className="absolute inset-0 flex items-center justify-center text-[155px] drop-shadow-[0_0_70px_rgba(139,92,246,.3)] sm:text-[190px]"
+            >
+              🏎️
+            </motion.div>
+
+            <div className="absolute bottom-[13%] left-[12%] max-w-[180px]">
+              <div className="text-[9px] font-black tracking-[0.2em] text-white/30">
+                OBJECT / 01
+              </div>
+              <div className="mt-1 text-xl font-black">
+                MAKE YOUR WALL LOUD.
+              </div>
+            </div>
+
+            <div className="absolute bottom-[8%] right-[8%] flex h-14 w-14 items-center justify-center rounded-full border border-white/20 text-white/40">
+              <ArrowUpRight size={18} />
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* MARQUEE */}
-      <div className="overflow-hidden border-y border-black/10 bg-[#ff4f91] py-3">
-        <motion.div
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="flex w-max gap-10 whitespace-nowrap text-xs font-black tracking-[0.18em]"
-        >
-          <span>MAKE YOUR SPACE YOURS ✦</span>
-          <span>HANDMADE WITH ATTITUDE ✦</span>
-          <span>NO BORING WALLS ✦</span>
-          <span>MAKE YOUR SPACE YOURS ✦</span>
-          <span>HANDMADE WITH ATTITUDE ✦</span>
-          <span>NO BORING WALLS ✦</span>
-        </motion.div>
-      </div>
+      {/* STATEMENT */}
+      <section className="border-y border-white/10 bg-[#0b0b0b]">
+        <div className="mx-auto grid max-w-7xl md:grid-cols-3">
+          {[
+            ["01", "HANDMADE", "Small batch. Big personality."],
+            ["02", "NOT BASIC", "Objects worth looking twice at."],
+            ["03", "YOUR WORLD", "Built around your vibe."],
+          ].map(([num, title, desc]) => (
+            <div
+              key={num}
+              className="border-b border-white/10 p-7 md:border-b-0 md:border-r md:last:border-r-0 lg:p-10"
+            >
+              <div className="text-[9px] font-black text-lime-300">{num}</div>
+              <div className="mt-7 text-lg font-black">{title}</div>
+              <div className="mt-2 text-xs text-white/35">{desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* CATEGORIES */}
-      <section id="categories" className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-        <div className="mb-8 flex items-end justify-between">
+      <section
+        id="categories"
+        className="mx-auto max-w-7xl px-5 py-20 lg:px-8"
+      >
+        <div className="mb-10 flex items-end justify-between">
           <div>
-            <p className="text-[9px] font-black tracking-[0.25em] text-[#ff4f91]">
-              FIND YOUR THING
-            </p>
-            <h2 className="mt-2 text-3xl font-black tracking-tight">
-              Shop by vibe.
+            <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-lime-300">
+              <Sparkles size={12} />
+              THE OBJECT LIBRARY
+            </div>
+
+            <h2 className="mt-3 text-4xl font-black uppercase tracking-[-0.05em] sm:text-6xl">
+              FIND YOUR
+              <br />
+              <span className="text-white/20">OBSESSION.</span>
             </h2>
           </div>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {categories.map((category, index) => (
+        <div className="flex flex-wrap gap-2">
+          {categories.map((category, i) => (
             <a
               key={category}
               href="#shop"
-              className={`whitespace-nowrap rounded-full border px-5 py-3 text-[10px] font-black uppercase tracking-wider transition hover:bg-[#111] hover:text-white ${
-                index === 0
-                  ? "border-[#111] bg-[#111] text-white"
-                  : "border-black/10 bg-white/50"
+              className={`border px-5 py-3 text-[9px] font-black tracking-[0.15em] transition ${
+                i === 0
+                  ? "border-lime-300 bg-lime-300 text-black"
+                  : "border-white/10 text-white/50 hover:border-white/40 hover:text-white"
               }`}
             >
               {category}
@@ -253,23 +312,24 @@ export default function Home() {
       </section>
 
       {/* PRODUCTS */}
-      <section id="shop" className="mx-auto max-w-7xl px-5 pb-20 lg:px-8">
-        <div className="mb-10 flex items-end justify-between">
+      <section id="shop" className="mx-auto max-w-7xl px-5 pb-24 lg:px-8">
+
+        <div className="mb-12 flex items-end justify-between border-b border-white/10 pb-5">
           <div>
-            <p className="text-[9px] font-black tracking-[0.25em] text-[#ff4f91]">
-              CURRENTLY OBSESSED
+            <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
+              001 — CURRENT DROP
             </p>
-            <h2 className="mt-2 text-4xl font-black tracking-[-0.04em]">
-              Cool stuff only.
+            <h2 className="mt-2 text-4xl font-black uppercase tracking-[-0.05em]">
+              GOOD STUFF.
             </h2>
           </div>
 
-          <button className="hidden rounded-full border border-black/10 px-5 py-3 text-[10px] font-black sm:block">
-            VIEW ALL →
-          </button>
+          <div className="hidden text-[9px] font-black tracking-widest text-white/30 sm:block">
+            SCROLL TO EXPLORE ↓
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
           {products.map((product, index) => (
             <motion.article
               key={product.name}
@@ -277,149 +337,137 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.08 }}
-              whileHover={{ y: -6 }}
+              whileHover={{ y: -8 }}
+              className="group"
             >
               <div
-                className={`group relative overflow-hidden rounded-[1.5rem] ${
-                  index === 0 || index === 3
-                    ? "aspect-[4/5]"
-                    : "aspect-square"
-                } ${
-                  index % 4 === 0
-                    ? "bg-[#dce5ff]"
-                    : index % 4 === 1
-                      ? "bg-[#ffe0e9]"
-                      : index % 4 === 2
-                        ? "bg-[#e7e0ff]"
-                        : "bg-[#d8f1e8]"
-                }`}
+                className={`relative aspect-[4/5] overflow-hidden border border-white/10 bg-gradient-to-br ${product.bg}`}
               >
-                <button className="absolute right-3 top-3 z-10 rounded-full bg-white/80 p-2 opacity-0 backdrop-blur transition group-hover:opacity-100">
-                  <Heart size={14} />
+
+                <div className="absolute left-3 top-3 z-10 text-[8px] font-black tracking-[0.2em] text-white/30">
+                  YTR / 0{index + 1}
+                </div>
+
+                <button className="absolute right-3 top-3 z-10 rounded-full border border-white/10 bg-black/30 p-2 opacity-0 backdrop-blur transition group-hover:opacity-100">
+                  <Heart size={13} />
                 </button>
 
-                <div className="flex h-full items-center justify-center transition duration-500 group-hover:scale-110">
-                  <span className="text-8xl">{product.image}</span>
-                </div>
+                <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.08)_1px,transparent_1px)] [background-size:30px_30px]" />
+
+                <motion.div
+                  whileHover={{ scale: 1.18, rotate: 6 }}
+                  className="absolute inset-0 flex items-center justify-center text-[90px] drop-shadow-[0_0_50px_rgba(255,255,255,.12)]"
+                >
+                  {product.visual}
+                </motion.div>
 
                 <button
                   onClick={() => setCart((value) => value + 1)}
-                  className="absolute bottom-3 left-3 right-3 rounded-full bg-[#111] py-3 text-[9px] font-black text-white opacity-0 transition group-hover:opacity-100"
+                  className="absolute bottom-3 left-3 right-3 translate-y-3 bg-white py-3 text-[9px] font-black text-black opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-lime-300"
                 >
                   + ADD TO BAG
                 </button>
               </div>
 
-              <div className="pt-4">
-                <p className="text-[8px] font-black tracking-[0.2em] text-black/35">
+              <div className="border-b border-white/10 py-4">
+                <div className="text-[8px] font-black tracking-[0.2em] text-white/30">
                   {product.category}
-                </p>
+                </div>
 
-                <h3 className="mt-1 text-sm font-black">{product.name}</h3>
-
-                <div className="mt-2 text-sm font-bold">{product.price}</div>
+                <div className="mt-1 flex items-start justify-between gap-2">
+                  <h3 className="text-sm font-black">{product.name}</h3>
+                  <span className="whitespace-nowrap text-xs font-bold text-lime-300">
+                    {product.price}
+                  </span>
+                </div>
               </div>
             </motion.article>
           ))}
         </div>
       </section>
 
-      {/* BIG STATEMENT */}
-      <section className="bg-[#111] px-5 py-24 text-white lg:px-8">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="text-[9px] font-black tracking-[0.3em] text-[#ff4f91]">
-            THE YTR PHILOSOPHY
+      {/* HUGE STATEMENT */}
+      <section
+        id="story"
+        className="relative overflow-hidden border-y border-white/10 bg-[#0b0b0b] px-5 py-28 lg:px-8"
+      >
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-700/10 blur-[130px]" />
+
+        <div className="relative mx-auto max-w-6xl">
+          <p className="text-[9px] font-black tracking-[0.3em] text-lime-300">
+            YTR / PHILOSOPHY
           </p>
 
-          <h2 className="mt-6 text-5xl font-black leading-[0.9] tracking-[-0.06em] sm:text-7xl lg:text-8xl">
-            YOUR ROOM
+          <h2 className="mt-8 text-[58px] font-black uppercase leading-[0.8] tracking-[-0.075em] sm:text-8xl lg:text-[125px]">
+            BORING
             <br />
-            SHOULDN&apos;T LOOK
+            ROOMS
             <br />
-            <span className="text-[#ffdf4d]">LIKE EVERYONE ELSE&apos;S.</span>
+            <span className="text-white/15">ARE A</span>
+            <br />
+            <span className="text-lime-300">CHOICE.</span>
           </h2>
 
-          <p className="mx-auto mt-8 max-w-lg text-sm leading-6 text-white/45">
-            We find and make pieces that give your space a little more
-            personality. Because basic is overrated.
+          <p className="mt-10 max-w-md text-sm leading-7 text-white/35">
+            We make and collect things that give your room a pulse. Strange
+            pieces. Handmade pieces. Pieces you actually want people to ask
+            about.
           </p>
         </div>
       </section>
 
-      {/* STORY */}
-      <section id="story" className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-[9px] font-black tracking-[0.25em] text-[#ff4f91]">
-              ABOUT YTR
-            </p>
+      {/* FINAL CTA */}
+      <section className="px-5 py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl border border-white/10 bg-[#101010] p-8 sm:p-14 lg:p-20">
+          <div className="grid items-end gap-10 md:grid-cols-2">
+            <div>
+              <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
+                THIS IS YOUR SIGN
+              </p>
 
-            <h2 className="mt-4 max-w-xl text-5xl font-black leading-[0.95] tracking-[-0.05em]">
-              For people who care about the little things.
-            </h2>
-
-            <p className="mt-6 max-w-lg text-sm leading-7 text-black/50">
-              ytR — Your Trendy Room — is a place for the pieces that make you
-              stop scrolling and think, “okay, I need that.”
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex aspect-square items-center justify-center rounded-[2rem] bg-[#dce5ff] text-7xl">
-              🪩
+              <h2 className="mt-5 text-5xl font-black uppercase leading-[0.85] tracking-[-0.06em] sm:text-7xl">
+                MAKE
+                <br />
+                YOUR ROOM
+                <br />
+                <span className="text-lime-300">UNFORGETTABLE.</span>
+              </h2>
             </div>
-            <div className="mt-8 flex aspect-square items-center justify-center rounded-[2rem] bg-[#ffcbdc] text-7xl">
-              🧸
-            </div>
-            <div className="-mt-8 flex aspect-square items-center justify-center rounded-[2rem] bg-[#ffdf4d] text-7xl">
-              🏎️
-            </div>
-            <div className="flex aspect-square items-center justify-center rounded-[2rem] bg-[#d8f1e8] text-7xl">
-              🌷
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* NEWSLETTER */}
-      <section className="px-5 pb-16 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-[2rem] bg-[#ff4f91] px-6 py-12 text-center sm:px-12">
-          <h2 className="text-4xl font-black tracking-[-0.04em]">
-            Be the cool friend.
-          </h2>
+            <div className="md:text-right">
+              <p className="mx-auto max-w-sm text-sm leading-6 text-white/35 md:ml-auto">
+                Follow the weird. Pick what feels like you. Build a space
+                nobody else could have made.
+              </p>
 
-          <p className="mx-auto mt-3 max-w-md text-sm text-black/60">
-            New drops, weird finds and room inspiration. Straight to your
-            inbox.
-          </p>
-
-          <div className="mx-auto mt-7 flex max-w-md rounded-full bg-white p-1.5">
-            <input
-              placeholder="your@email.com"
-              className="min-w-0 flex-1 bg-transparent px-4 text-xs outline-none"
-            />
-            <button className="rounded-full bg-[#111] px-5 py-3 text-[9px] font-black text-white">
-              JOIN →
-            </button>
+              <a
+                href="#shop"
+                className="mt-7 inline-flex items-center gap-3 bg-lime-300 px-7 py-4 text-[9px] font-black tracking-[0.15em] text-black transition hover:bg-white"
+              >
+                EXPLORE YTR
+                <ArrowUpRight size={15} />
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-black/10 px-5 py-10 lg:px-8">
+      <footer className="border-t border-white/10 px-5 py-10 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="text-4xl font-black tracking-[-0.09em]">
-              yt<span className="text-[#ff4f91]">R</span>
+            <div className="text-4xl font-black tracking-[-0.12em]">
+              yt<span className="text-lime-300">R</span>
             </div>
-            <p className="mt-1 text-[8px] font-bold tracking-[0.3em] text-black/35">
+
+            <div className="mt-2 text-[8px] font-bold tracking-[0.25em] text-white/25">
               YOUR TRENDY ROOM
-            </p>
+            </div>
           </div>
 
-          <p className="text-[10px] text-black/35">
-            © 2026 ytR. Made for rooms with personality.
-          </p>
+          <div className="text-[9px] font-bold tracking-wider text-white/25">
+            © 2026 YTR — NO BORING ROOMS.
+          </div>
         </div>
       </footer>
     </main>
