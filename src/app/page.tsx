@@ -12,37 +12,56 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
-const products = [
+const demoProducts = [
   {
+    id: "demo-1",
     name: "Racer Wall Piece",
     category: "WALL / 01",
     price: "₹899",
     visual: "🏎️",
     bg: "from-zinc-900 to-violet-950",
+    image_url: null,
   },
   {
+    id: "demo-2",
     name: "Cloud Nine",
     category: "HANDMADE / 02",
     price: "₹699",
     visual: "☁️",
     bg: "from-neutral-900 to-slate-800",
+    image_url: null,
   },
   {
+    id: "demo-3",
     name: "Retro Frame",
     category: "WALL / 03",
     price: "₹799",
     visual: "🖼️",
     bg: "from-zinc-900 to-emerald-950",
+    image_url: null,
   },
   {
+    id: "demo-4",
     name: "Cherry Bomb",
     category: "DECOR / 04",
     price: "₹499",
     visual: "🍒",
     bg: "from-neutral-900 to-red-950",
+    image_url: null,
   },
 ];
+
+type Product = {
+  id: string;
+  name: string;
+  category: string;
+  price: string;
+  visual: string;
+  bg: string;
+  image_url: string | null;
+};
 
 const categories = [
   "ALL",
@@ -63,6 +82,7 @@ type CartItem = {
 export default function Home() {
   const [menu, setMenu] = useState(false);
   const [cart, setCart] = useState(0);
+  const [products, setProducts] = useState<Product[]>(demoProducts);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("ytr-cart");
@@ -83,7 +103,53 @@ export default function Home() {
     }
   }, []);
 
-  const addToCart = (product: (typeof products)[number]) => {
+  useEffect(() => {
+    const loadProducts = async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Supabase products error:", error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        setProducts(demoProducts);
+        return;
+      }
+
+      const formattedProducts: Product[] = data.map(
+        (product, index) => ({
+          id: product.id,
+          name: product.name,
+          category: `${product.category} / ${String(
+            index + 1
+          ).padStart(2, "0")}`,
+          price: `₹${Number(product.price).toLocaleString(
+            "en-IN"
+          )}`,
+          visual: "✦",
+          bg:
+            index % 4 === 0
+              ? "from-zinc-900 to-violet-950"
+              : index % 4 === 1
+                ? "from-neutral-900 to-slate-800"
+                : index % 4 === 2
+                  ? "from-zinc-900 to-emerald-950"
+                  : "from-neutral-900 to-red-950",
+          image_url: product.image_url,
+        })
+      );
+
+      setProducts(formattedProducts);
+    };
+
+    loadProducts();
+  }, []);
+
+  const addToCart = (product: Product) => {
     const existing: CartItem[] = JSON.parse(
       localStorage.getItem("ytr-cart") || "[]"
     );
@@ -97,7 +163,9 @@ export default function Home() {
     } else {
       existing.push({
         name: product.name,
-        price: Number(product.price.replace("₹", "")),
+        price: Number(
+          product.price.replace(/[₹,]/g, "")
+        ),
         visual: product.visual,
         quantity: 1,
       });
@@ -505,7 +573,7 @@ export default function Home() {
 
           {products.map((product, index) => (
             <motion.article
-              key={product.name}
+              key={product.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -536,17 +604,27 @@ export default function Home() {
 
                 <motion.div
                   whileHover={{
-                    scale: 1.2,
-                    rotate: index % 2 === 0 ? 5 : -5,
+                    scale: 1.08,
+                    rotate: index % 2 === 0 ? 2 : -2,
                   }}
                   transition={{
                     type: "spring",
                     stiffness: 200,
                     damping: 12,
                   }}
-                  className="absolute inset-0 flex items-center justify-center text-[90px]"
+                  className="absolute inset-0 flex items-center justify-center"
                 >
-                  {product.visual}
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                    />
+                  ) : (
+                    <span className="text-[90px]">
+                      {product.visual}
+                    </span>
+                  )}
                 </motion.div>
 
                 {/* REAL ADD TO BAG */}
