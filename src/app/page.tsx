@@ -105,45 +105,67 @@ export default function Home() {
 
   useEffect(() => {
     const loadProducts = async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
+      try {
+        /*
+         * If Supabase environment variables are missing,
+         * simply keep the demo products instead of crashing.
+         */
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey =
+          process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-      if (error) {
-        console.error("Supabase products error:", error);
-        return;
-      }
+        if (!supabaseUrl || !supabaseKey) {
+          console.warn(
+            "Supabase environment variables are missing. Using demo products."
+          );
+          setProducts(demoProducts);
+          return;
+        }
 
-      if (!data || data.length === 0) {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Supabase products error:", error);
+          setProducts(demoProducts);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          setProducts(demoProducts);
+          return;
+        }
+
+        const formattedProducts: Product[] = data.map(
+          (product, index) => ({
+            id: product.id,
+            name: product.name,
+            category: `${product.category} / ${String(
+              index + 1
+            ).padStart(2, "0")}`,
+            price: `₹${Number(product.price).toLocaleString(
+              "en-IN"
+            )}`,
+            visual: "✦",
+            bg:
+              index % 4 === 0
+                ? "from-zinc-900 to-violet-950"
+                : index % 4 === 1
+                  ? "from-neutral-900 to-slate-800"
+                  : index % 4 === 2
+                    ? "from-zinc-900 to-emerald-950"
+                    : "from-neutral-900 to-red-950",
+            image_url: product.image_url,
+          })
+        );
+
+        setProducts(formattedProducts);
+      } catch (error) {
+        console.error("Failed to load products:", error);
         setProducts(demoProducts);
-        return;
       }
-
-      const formattedProducts: Product[] = data.map(
-        (product, index) => ({
-          id: product.id,
-          name: product.name,
-          category: `${product.category} / ${String(
-            index + 1
-          ).padStart(2, "0")}`,
-          price: `₹${Number(product.price).toLocaleString(
-            "en-IN"
-          )}`,
-          visual: "✦",
-          bg:
-            index % 4 === 0
-              ? "from-zinc-900 to-violet-950"
-              : index % 4 === 1
-                ? "from-neutral-900 to-slate-800"
-                : index % 4 === 2
-                  ? "from-zinc-900 to-emerald-950"
-                  : "from-neutral-900 to-red-950",
-          image_url: product.image_url,
-        })
-      );
-
-      setProducts(formattedProducts);
     };
 
     loadProducts();
@@ -266,7 +288,6 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-1">
-
             <button className="rounded-full p-2.5 text-white/60 hover:bg-white/5 hover:text-white">
               <Search size={18} />
             </button>
@@ -275,7 +296,6 @@ export default function Home() {
               <Heart size={18} />
             </button>
 
-            {/* CART */}
             <Link
               href="/cart"
               className="relative rounded-full border border-white/10 bg-white/[0.04] p-2.5"
@@ -288,7 +308,6 @@ export default function Home() {
                 </span>
               )}
             </Link>
-
           </div>
         </div>
 
@@ -389,7 +408,6 @@ export default function Home() {
               className="group mt-8 inline-flex items-center gap-4 border border-white/20 bg-white px-7 py-4 text-[10px] font-black tracking-[0.15em] text-black transition hover:bg-lime-300"
             >
               ENTER THE ROOM
-
               <ArrowUpRight
                 size={15}
                 className="transition group-hover:rotate-45"
@@ -511,7 +529,6 @@ export default function Home() {
       >
         <div className="mb-10 flex items-end justify-between">
           <div>
-
             <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-lime-300">
               <Sparkles size={12} />
               THE OBJECT LIBRARY
@@ -524,7 +541,6 @@ export default function Home() {
                 OBSESSION.
               </span>
             </h2>
-
           </div>
         </div>
 
@@ -550,9 +566,7 @@ export default function Home() {
         id="shop"
         className="mx-auto max-w-7xl px-5 pb-24 lg:px-8"
       >
-
         <div className="mb-12 flex items-end justify-between border-b border-white/10 pb-5">
-
           <div>
             <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
               001 — CURRENT DROP
@@ -566,11 +580,9 @@ export default function Home() {
           <div className="hidden text-[9px] font-black tracking-widest text-white/30 sm:block">
             SCROLL TO EXPLORE ↓
           </div>
-
         </div>
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
-
           {products.map((product, index) => (
             <motion.article
               key={product.id}
@@ -587,11 +599,9 @@ export default function Home() {
               }}
               className="group"
             >
-
               <div
                 className={`relative aspect-[4/5] overflow-hidden border border-white/10 bg-gradient-to-br ${product.bg}`}
               >
-
                 <div className="absolute left-3 top-3 z-10 text-[8px] font-black tracking-[0.2em] text-white/30">
                   YTR / 0{index + 1}
                 </div>
@@ -627,24 +637,20 @@ export default function Home() {
                   )}
                 </motion.div>
 
-                {/* REAL ADD TO BAG */}
                 <button
                   onClick={() => addToCart(product)}
                   className="absolute bottom-3 left-3 right-3 translate-y-3 bg-white py-3 text-[9px] font-black text-black opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100 hover:bg-lime-300"
                 >
                   + ADD TO BAG
                 </button>
-
               </div>
 
               <div className="border-b border-white/10 py-4">
-
                 <div className="text-[8px] font-black tracking-[0.2em] text-white/30">
                   {product.category}
                 </div>
 
                 <div className="mt-1 flex items-start justify-between gap-2">
-
                   <h3 className="text-sm font-black">
                     {product.name}
                   </h3>
@@ -652,26 +658,19 @@ export default function Home() {
                   <span className="whitespace-nowrap text-xs font-bold text-lime-300">
                     {product.price}
                   </span>
-
                 </div>
-
               </div>
-
             </motion.article>
           ))}
-
         </div>
       </section>
 
-      {/* ROOM INSPO — MOVING GALLERY */}
+      {/* ROOM INSPO */}
       <section className="overflow-hidden border-y border-white/10 bg-[#050505] py-24">
 
         <div className="mx-auto max-w-7xl px-5 pb-12 lg:px-8">
-
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-
             <div>
-
               <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.3em] text-lime-300">
                 <Sparkles size={12} />
                 YTR / ROOM INSPO
@@ -688,7 +687,6 @@ export default function Home() {
                   HARD.
                 </span>
               </h2>
-
             </div>
 
             <p className="max-w-sm text-xs leading-6 text-white/35">
@@ -696,13 +694,11 @@ export default function Home() {
               <br />
               A little inspiration for your next room obsession.
             </p>
-
           </div>
         </div>
 
         {/* ROW 1 */}
         <div className="relative mb-5 overflow-hidden">
-
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{
@@ -712,7 +708,6 @@ export default function Home() {
             }}
             className="flex w-max gap-5"
           >
-
             {[
               {
                 image:
@@ -751,7 +746,6 @@ export default function Home() {
                 title: "MAKE IT YOURS",
               },
             ].map((room, index) => (
-
               <motion.div
                 key={`${room.title}-${index}`}
                 whileHover={{
@@ -765,7 +759,6 @@ export default function Home() {
                 }}
                 className="group relative h-[280px] w-[390px] shrink-0 overflow-hidden border border-white/10 bg-zinc-900 sm:h-[350px] sm:w-[500px]"
               >
-
                 <img
                   src={room.image}
                   alt={room.title}
@@ -779,7 +772,6 @@ export default function Home() {
                 </div>
 
                 <div className="absolute bottom-5 left-5">
-
                   <div className="text-lg font-black uppercase tracking-tight">
                     {room.title}
                   </div>
@@ -787,24 +779,18 @@ export default function Home() {
                   <div className="mt-1 text-[8px] font-black tracking-[0.2em] text-lime-300">
                     INSPO →
                   </div>
-
                 </div>
 
                 <div className="absolute bottom-5 right-5 text-[9px] font-black text-white/30">
                   0{index + 1}
                 </div>
-
               </motion.div>
-
             ))}
-
           </motion.div>
-
         </div>
 
         {/* ROW 2 */}
         <div className="relative overflow-hidden">
-
           <motion.div
             animate={{ x: ["-50%", "0%"] }}
             transition={{
@@ -814,7 +800,6 @@ export default function Home() {
             }}
             className="flex w-max gap-5"
           >
-
             {[
               {
                 image:
@@ -853,7 +838,6 @@ export default function Home() {
                 title: "MAKE IT LOUD",
               },
             ].map((room, index) => (
-
               <motion.div
                 key={`${room.title}-${index}`}
                 whileHover={{
@@ -862,7 +846,6 @@ export default function Home() {
                 }}
                 className="group relative h-[220px] w-[310px] shrink-0 overflow-hidden border border-white/10 bg-zinc-900 sm:h-[290px] sm:w-[430px]"
               >
-
                 <img
                   src={room.image}
                   alt={room.title}
@@ -876,7 +859,6 @@ export default function Home() {
                 </div>
 
                 <div className="absolute bottom-5 left-5">
-
                   <div className="text-base font-black uppercase">
                     {room.title}
                   </div>
@@ -884,19 +866,13 @@ export default function Home() {
                   <div className="mt-1 text-[8px] font-black tracking-[0.2em] text-lime-300">
                     GET INSPIRED →
                   </div>
-
                 </div>
-
               </motion.div>
-
             ))}
-
           </motion.div>
-
         </div>
 
         <div className="mx-auto mt-12 flex max-w-7xl items-center justify-between border-t border-white/10 px-5 pt-5 lg:px-8">
-
           <span className="text-[8px] font-black tracking-[0.25em] text-white/25">
             MORE ROOMS / MORE PERSONALITY
           </span>
@@ -911,9 +887,7 @@ export default function Home() {
           >
             KEEP SCROLLING →
           </motion.span>
-
         </div>
-
       </section>
 
       {/* HUGE STATEMENT */}
@@ -921,11 +895,9 @@ export default function Home() {
         id="story"
         className="relative overflow-hidden border-y border-white/10 bg-[#0b0b0b] px-5 py-28 lg:px-8"
       >
-
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-700/10 blur-[130px]" />
 
         <div className="relative mx-auto max-w-6xl">
-
           <p className="text-[9px] font-black tracking-[0.3em] text-lime-300">
             YTR / PHILOSOPHY
           </p>
@@ -949,19 +921,14 @@ export default function Home() {
             pieces. Handmade pieces. Pieces you actually want people to ask
             about.
           </p>
-
         </div>
       </section>
 
       {/* FINAL CTA */}
       <section className="px-5 py-20 lg:px-8">
-
         <div className="mx-auto max-w-7xl border border-white/10 bg-[#101010] p-8 sm:p-14 lg:p-20">
-
           <div className="grid items-end gap-10 md:grid-cols-2">
-
             <div>
-
               <p className="text-[9px] font-black tracking-[0.3em] text-white/30">
                 THIS IS YOUR SIGN
               </p>
@@ -975,11 +942,9 @@ export default function Home() {
                   UNFORGETTABLE.
                 </span>
               </h2>
-
             </div>
 
             <div className="md:text-right">
-
               <p className="mx-auto max-w-sm text-sm leading-6 text-white/35 md:ml-auto">
                 Follow the weird. Pick what feels like you. Build a space
                 nobody else could have made.
@@ -999,21 +964,15 @@ export default function Home() {
                 EXPLORE YTR
                 <ArrowUpRight size={15} />
               </motion.a>
-
             </div>
-
           </div>
-
         </div>
       </section>
 
       {/* FOOTER */}
       <footer className="border-t border-white/10 px-5 py-10 lg:px-8">
-
         <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-
           <div>
-
             <div className="text-4xl font-black tracking-[-0.12em]">
               yt<span className="text-lime-300">R</span>
             </div>
@@ -1021,15 +980,12 @@ export default function Home() {
             <div className="mt-2 text-[8px] font-bold tracking-[0.25em] text-white/25">
               YOUR TRENDY ROOM
             </div>
-
           </div>
 
           <div className="text-[9px] font-bold tracking-wider text-white/25">
             © 2026 YTR — NO BORING ROOMS.
           </div>
-
         </div>
-
       </footer>
 
     </main>
