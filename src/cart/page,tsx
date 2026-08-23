@@ -1,8 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Trash2, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 type CartItem = {
   name: string;
@@ -11,8 +18,29 @@ type CartItem = {
   quantity: number;
 };
 
+type Customer = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  pincode: string;
+};
+
 export default function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const [customer, setCustomer] = useState<Customer>({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    pincode: "",
+  });
 
   useEffect(() => {
     const saved = localStorage.getItem("ytr-cart");
@@ -23,6 +51,14 @@ export default function CartPage() {
       } catch {
         localStorage.removeItem("ytr-cart");
       }
+    }
+
+    if (!document.querySelector("#razorpay-script")) {
+      const script = document.createElement("script");
+      script.id = "razorpay-script";
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
     }
   }, []);
 
@@ -60,6 +96,169 @@ export default function CartPage() {
     0
   );
 
+  const handleInput = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setCustomer({
+      ...customer,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const startPayment = async () => {
+    if (!customer.name || !customer.email || !customer.phone ||
+        !customer.address || !customer.city || !customer.pincode) {
+      alert("Please fill all delivery details.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(customer.phone)) {
+      alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(customer.pincode)) {
+      alert("Please enter a valid 6-digit pincode.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: total,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Could not create payment.");
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: "INR",
+        name: "YTR — Your Trendy Room",
+        description: "YTR Room Objects",
+        order_id: data.orderId,
+
+        prefill: {
+          name: customer.name,
+          email: customer.email,
+          contact: customer.phone,
+        },
+
+        notes: {
+          address: customer.address,
+          city: customer.city,
+          pincode: customer.pincode,
+        },
+
+        theme: {
+          color: "#bef264",
+        },
+
+        handler: async function (payment: any) {
+          try {
+            const { error } = await supabase.from("orders").insert({
+              customer_name: customer.name,
+              email: customer.email,
+              phone: customer.phone,
+              address: customer.address,
+              city: customer.city,
+              pincode: customer.pincode,
+              items: cart,
+              total: total,
+              status: "paid",
+            });
+
+            if (error) {
+              console.error(error);
+              alert(
+                "Payment received, but we could not save your order. Please contact YTR support."
+              );
+              return;
+            }
+
+            localStorage.removeItem("ytr-cart");
+            setCart([]);
+            setSuccess(true);
+
+            console.log("Razorpay payment:", payment.razorpay_payment_id);
+          } catch (error) {
+            console.error(error);
+            alert("Something went wrong after payment.");
+          }
+        },
+
+        modal: {
+          ondismiss: function () {
+            setLoading(false);
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.on("payment.failed", function (response: any) {
+        console.error(response.error);
+        alert(
+          response.error?.description ||
+            "Payment failed. Please try again."
+        );
+        setLoading(false);
+      });
+
+      razorpay.open();
+    } catch (error) {
+      console.error(error);
+      alert("Unable to start checkout. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#070707] px-5 text-white">
+        <div className="w-full max-w-lg border border-white/10 bg-[#0d0d0d] p-10 text-center">
+          <CheckCircle
+            size={60}
+            className="mx-auto text-lime-300"
+          />
+
+          <p className="mt-7 text-[9px] font-black tracking-[0.3em] text-lime-300">
+            YTR / ORDER CONFIRMED
+          </p>
+
+          <h1 className="mt-4 text-5xl font-black uppercase tracking-[-0.06em]">
+            YOU&apos;RE
+            <br />
+            IN.
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-sm text-sm leading-6 text-white/40">
+            Your order has been placed successfully. We&apos;ll get
+            your YTR object moving soon.
+          </p>
+
+          <Link
+            href="/"
+            className="mt-8 inline-flex bg-lime-300 px-8 py-4 text-[9px] font-black tracking-widest text-black"
+          >
+            BACK TO YTR →
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#070707] px-5 py-10 text-white lg:px-12">
 
@@ -71,7 +270,7 @@ export default function CartPage() {
         BACK TO YTR
       </Link>
 
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
 
         <div className="mb-12">
           <p className="text-[9px] font-black tracking-[0.3em] text-lime-300">
@@ -87,7 +286,6 @@ export default function CartPage() {
 
         {cart.length === 0 ? (
           <div className="border border-white/10 p-16 text-center">
-
             <p className="text-sm text-white/40">
               Your bag is empty.
             </p>
@@ -98,27 +296,23 @@ export default function CartPage() {
             >
               FIND SOMETHING COOL
             </Link>
-
           </div>
         ) : (
-
-          <div className="grid gap-10 lg:grid-cols-[1fr_350px]">
+          <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
 
             <div className="space-y-3">
 
               {cart.map((item, index) => (
-
                 <div
                   key={`${item.name}-${index}`}
-                  className="flex items-center gap-5 border border-white/10 bg-[#0d0d0d] p-4"
+                  className="flex items-center gap-4 border border-white/10 bg-[#0d0d0d] p-4"
                 >
 
-                  <div className="flex h-24 w-24 items-center justify-center bg-[#151515] text-5xl">
+                  <div className="flex h-24 w-24 shrink-0 items-center justify-center bg-[#151515] text-5xl">
                     {item.visual}
                   </div>
 
                   <div className="flex-1">
-
                     <p className="text-[8px] font-black tracking-widest text-white/30">
                       YTR / OBJECT
                     </p>
@@ -128,13 +322,11 @@ export default function CartPage() {
                     </h2>
 
                     <p className="mt-2 text-xs text-lime-300">
-                      ₹{item.price}
+                      ₹{item.price.toLocaleString("en-IN")}
                     </p>
-
                   </div>
 
                   <div className="flex items-center gap-3 border border-white/10 px-2 py-2">
-
                     <button onClick={() => decrease(index)}>
                       <Minus size={13} />
                     </button>
@@ -146,7 +338,6 @@ export default function CartPage() {
                     <button onClick={() => increase(index)}>
                       <Plus size={13} />
                     </button>
-
                   </div>
 
                   <button
@@ -168,54 +359,115 @@ export default function CartPage() {
               </p>
 
               <div className="mt-8 flex justify-between text-sm">
-                <span className="text-white/40">
-                  Subtotal
-                </span>
-
-                <span>
-                  ₹{total}
-                </span>
+                <span className="text-white/40">Subtotal</span>
+                <span>₹{total.toLocaleString("en-IN")}</span>
               </div>
 
               <div className="mt-3 flex justify-between text-sm">
-
-                <span className="text-white/40">
-                  Shipping
-                </span>
-
-                <span className="text-lime-300">
-                  FREE
-                </span>
-
+                <span className="text-white/40">Shipping</span>
+                <span className="text-lime-300">FREE</span>
               </div>
 
               <div className="my-6 border-t border-white/10" />
 
               <div className="flex justify-between">
-
-                <span className="text-xs font-black">
-                  TOTAL
-                </span>
+                <span className="text-xs font-black">TOTAL</span>
 
                 <span className="text-xl font-black text-lime-300">
-                  ₹{total}
+                  ₹{total.toLocaleString("en-IN")}
                 </span>
-
               </div>
 
-              <button
-                className="mt-7 w-full bg-lime-300 py-4 text-[9px] font-black tracking-[0.2em] text-black transition hover:bg-white"
-                onClick={() =>
-                  alert("Razorpay checkout coming next")
-                }
-              >
-                CHECKOUT →
-              </button>
+              {!showCheckout ? (
+                <button
+                  onClick={() => setShowCheckout(true)}
+                  className="mt-7 w-full bg-lime-300 py-4 text-[9px] font-black tracking-[0.2em] text-black transition hover:bg-white"
+                >
+                  PROCEED TO CHECKOUT →
+                </button>
+              ) : (
+                <div className="mt-7 space-y-3">
+
+                  <p className="mb-4 text-[9px] font-black tracking-[0.2em] text-lime-300">
+                    DELIVERY DETAILS
+                  </p>
+
+                  <input
+                    name="name"
+                    placeholder="FULL NAME"
+                    value={customer.name}
+                    onChange={handleInput}
+                    className="w-full border border-white/10 bg-black px-4 py-3 text-xs outline-none placeholder:text-white/25 focus:border-lime-300"
+                  />
+
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="EMAIL"
+                    value={customer.email}
+                    onChange={handleInput}
+                    className="w-full border border-white/10 bg-black px-4 py-3 text-xs outline-none placeholder:text-white/25 focus:border-lime-300"
+                  />
+
+                  <input
+                    name="phone"
+                    inputMode="numeric"
+                    placeholder="10-DIGIT PHONE"
+                    value={customer.phone}
+                    onChange={handleInput}
+                    className="w-full border border-white/10 bg-black px-4 py-3 text-xs outline-none placeholder:text-white/25 focus:border-lime-300"
+                  />
+
+                  <textarea
+                    name="address"
+                    placeholder="FULL DELIVERY ADDRESS"
+                    value={customer.address}
+                    onChange={handleInput}
+                    rows={3}
+                    className="w-full resize-none border border-white/10 bg-black px-4 py-3 text-xs outline-none placeholder:text-white/25 focus:border-lime-300"
+                  />
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      name="city"
+                      placeholder="CITY"
+                      value={customer.city}
+                      onChange={handleInput}
+                      className="w-full border border-white/10 bg-black px-4 py-3 text-xs outline-none placeholder:text-white/25 focus:border-lime-300"
+                    />
+
+                    <input
+                      name="pincode"
+                      inputMode="numeric"
+                      placeholder="PINCODE"
+                      value={customer.pincode}
+                      onChange={handleInput}
+                      className="w-full border border-white/10 bg-black px-4 py-3 text-xs outline-none placeholder:text-white/25 focus:border-lime-300"
+                    />
+                  </div>
+
+                  <button
+                    onClick={startPayment}
+                    disabled={loading}
+                    className="mt-3 w-full bg-lime-300 py-4 text-[9px] font-black tracking-[0.2em] text-black transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {loading
+                      ? "OPENING PAYMENT..."
+                      : `PAY ₹${total.toLocaleString("en-IN")} →`}
+                  </button>
+
+                  <button
+                    onClick={() => setShowCheckout(false)}
+                    className="w-full py-3 text-[8px] font-black tracking-widest text-white/30 hover:text-white"
+                  >
+                    ← BACK
+                  </button>
+
+                </div>
+              )}
 
             </div>
-
           </div>
-
         )}
 
       </div>
