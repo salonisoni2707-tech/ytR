@@ -84,7 +84,7 @@ export default function CartPage() {
   };
 
   const saveOrder = async (payment: RazorpayResponse) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("orders")
       .insert({
         customer_name: form.name,
@@ -98,12 +98,10 @@ export default function CartPage() {
         status: "paid",
         payment_id: payment.razorpay_payment_id,
         razorpay_order_id: payment.razorpay_order_id,
-      })
-      .select("id")
-      .single();
+      });
 
     if (error) throw error;
-    return data.id as string;
+    return payment.razorpay_order_id;
   };
 
   const placeOrder = async (e: React.FormEvent) => {
@@ -182,7 +180,7 @@ export default function CartPage() {
           <p className="mt-8 text-[9px] font-black tracking-[0.3em] text-lime-300">YTR / ORDER CONFIRMED</p>
           <h1 className="mt-4 text-5xl font-black uppercase tracking-[-0.07em] sm:text-7xl">YOU&apos;RE<br />IN<span className="text-lime-300">.</span></h1>
           <p className="mx-auto mt-6 max-w-md text-sm leading-6 text-white/40">Payment received and your YTR order is confirmed. We&apos;ll get your object ready and contact you with the next steps.</p>
-          {orderId && <div className="mt-8 border border-white/10 bg-black/30 p-4"><p className="text-[8px] font-black tracking-[0.2em] text-white/30">ORDER ID</p><p className="mt-2 break-all text-xs font-bold text-lime-300">{orderId}</p></div>}
+          {orderId && <div className="mt-8 border border-white/10 bg-black/30 p-4"><p className="text-[8px] font-black tracking-[0.2em] text-white/30">RAZORPAY ORDER ID</p><p className="mt-2 break-all text-xs font-bold text-lime-300">{orderId}</p></div>}
           <Link href="/#shop" className="mt-8 inline-flex bg-lime-300 px-8 py-4 text-[9px] font-black tracking-[0.2em] text-black transition hover:bg-white">KEEP EXPLORING YTR →</Link>
         </div>
       </main>
