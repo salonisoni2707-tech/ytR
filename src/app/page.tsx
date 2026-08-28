@@ -711,37 +711,37 @@ export default function Home() {
             {[
               {
                 image:
-                  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-1.jpg",
                 label: "DARK / 001",
                 title: "MIDNIGHT ROOM",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-2.jpg",
                 label: "CREATIVE / 002",
                 title: "OBJECT HEAVEN",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-3.jpg",
                 label: "MINIMAL / 003",
                 title: "LESS BASIC",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-1.jpg",
                 label: "STREET / 004",
                 title: "YOUR SPACE",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-2.jpg",
                 label: "OBJECT / 005",
                 title: "NO BORING WALLS",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-3.jpg",
                 label: "VIBE / 006",
                 title: "MAKE IT YOURS",
               },
@@ -803,37 +803,37 @@ export default function Home() {
             {[
               {
                 image:
-                  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-4.jpg",
                 label: "RAW / 007",
                 title: "BUILT DIFFERENT",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-5.jpg",
                 label: "RETRO / 008",
                 title: "OLD SCHOOL",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-6.jpg",
                 label: "ART / 009",
                 title: "WALL ENERGY",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-7.jpg",
                 label: "NIGHT / 010",
                 title: "AFTER DARK",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-5.jpg",
                 label: "RETRO / 011",
                 title: "COLLECT YOUR VIBE",
               },
               {
                 image:
-                  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85",
+                  "/products/room-6.jpg",
                 label: "ART / 012",
                 title: "MAKE IT LOUD",
               },
