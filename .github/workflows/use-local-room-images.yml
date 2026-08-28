@@ -1,0 +1,55 @@
+name: Use local room images
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  replace-room-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Replace demo room images with uploaded images
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path("src/app/page.tsx")
+          text = path.read_text(encoding="utf-8")
+
+          replacements = {
+              "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85": "/products/room-1.jpg",
+              "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85": "/products/room-2.jpg",
+              "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=85": "/products/room-3.jpg",
+              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85": "/products/room-4.jpg",
+              "https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=85": "/products/room-5.jpg",
+              "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85": "/products/room-6.jpg",
+              "https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=900&q=85": "/products/room-7.jpg",
+          }
+
+          changed = False
+          for old, new in replacements.items():
+              if old in text:
+                  text = text.replace(old, new)
+                  changed = True
+
+          # The original design has repeated cards; use the 8th uploaded image
+          # for any remaining Unsplash room image after the first replacements.
+          text = re.sub(r"https://images\.unsplash\.com/[^\"']+", "/products/room-8.jpg", text)
+
+          path.write_text(text, encoding="utf-8")
+          print("Room image references updated:", changed)
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app/page.tsx
+          git diff --cached --quiet || git commit -m "Use uploaded room images"
+          git push
