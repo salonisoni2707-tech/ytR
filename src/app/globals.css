@@ -19,8 +19,76 @@
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
+  margin: 0;
+  min-width: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+video,
+svg {
+  max-width: 100%;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+}
+
+/* Touch devices do not have hover. Keep important shopping controls usable. */
+@media (hover: none), (pointer: coarse) {
+  .group button[class*="bottom-3"] {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+
+  .group button[class*="top-3"] {
+    opacity: 1 !important;
+  }
+}
+
+/* Small phones: prevent the oversized editorial typography from causing horizontal overflow. */
+@media (max-width: 380px) {
+  main h1 {
+    font-size: clamp(44px, 15.5vw, 58px) !important;
+  }
+
+  main h2 {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Keep the large animated room cards usable on narrow screens. */
+@media (max-width: 480px) {
+  [class*="w-[390px]"],
+  [class*="w-[310px]"] {
+    max-width: calc(100vw - 40px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
